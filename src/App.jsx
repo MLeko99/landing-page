@@ -1,6 +1,12 @@
-import React, { useState } from "react";
-import "./App.css";
+import React, { useEffect, useState } from "react";
 import { useNavigate, Route, Routes, Navigate } from "react-router-dom";
+
+import Home from "./pages/Home";
+import About from "./pages/About";
+import Details from "./pages/Details";
+import ContactUs from "./pages/ContactUs";
+import { ROUTES, ACTIVE_SECTION_KEY } from "./constants";
+import "./App.css";
 
 const App = () => {
   const [activeSection, setActiveSection] = useState(0);
@@ -11,29 +17,38 @@ const App = () => {
     {
       id: 0,
       name: "Home",
-      path: "/",
+      path: ROUTES.HOME,
     },
     {
       id: 1,
       name: "About",
-      path: "/about",
+      path: ROUTES.ABOUT,
     },
     {
       id: 2,
       name: "Details",
-      path: "/details",
+      path: ROUTES.DETAILS,
     },
     {
       id: 3,
       name: "Contact us",
-      path: "/contact-us",
+      path: ROUTES.CONTACT_US,
     },
   ];
 
   const handleClickSection = (sectionId, path) => {
     setActiveSection(sectionId);
+    localStorage.setItem(ACTIVE_SECTION_KEY, sectionId);
     navigate(path);
   };
+
+  useEffect(() => {
+    const activeSelectionFromStorage = localStorage.getItem(ACTIVE_SECTION_KEY);
+    console.log(typeof activeSelectionFromStorage);
+    if (activeSelectionFromStorage) {
+      setActiveSection(parseInt(activeSelectionFromStorage, 10));
+    }
+  }, []);
 
   return (
     <>
@@ -51,11 +66,11 @@ const App = () => {
         ))}
       </div>
       <Routes>
-        <Route path="/" element={<h1>Home component</h1>} />
-        <Route path="/about" element={<h1>About component</h1>} />
-        <Route path="/details" element={<h1>Details component</h1>} />
-        <Route path="/contact-us" element={<h1>Contact us component</h1>} />
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route path={ROUTES.HOME} element={<Home />} />
+        <Route path={ROUTES.ABOUT} element={<About />} />
+        <Route path={ROUTES.DETAILS} element={<Details />} />
+        <Route path={ROUTES.CONTACT_US} element={<ContactUs />} />
+        <Route path="*" element={<Navigate to={ROUTES.HOME} />} />
       </Routes>
     </>
   );
